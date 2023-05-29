@@ -7,9 +7,11 @@ import android.net.Uri
 import android.provider.CallLog
 import android.provider.ContactsContract
 import android.provider.Telephony
+import android.util.Log
 import com.example.mangoapps.models.CallLogs
 import com.example.mangoapps.models.Contact
 import com.example.mangoapps.models.SMS
+import java.util.Collections
 
 fun retrieveContacts(contentResolver: ContentResolver): List<Contact> {
     val listOfContact = mutableListOf<Contact>()
@@ -96,7 +98,7 @@ fun retrieveImages(contactResolver: ContentResolver, withName: Boolean = false):
             val imageInd = imageCursor.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO)
 
             while (imageCursor.moveToNext()) {
-                if (contactIdInd != -1 && imageInd != -1) {
+                if (contactIdInd != -1 && imageInd != -1 && nameInd != -1) {
                     val photoBytes = imageCursor.getBlob(imageInd)
                     val contactId = imageCursor.getString(contactIdInd)
                     val name = imageCursor.getString(nameInd)
@@ -146,21 +148,29 @@ fun retrieveCallLogs(contentResolver: ContentResolver): List<CallLogs> {
             val typeInd = logsCursor.getColumnIndex(CALL_LOGS_PROJECTION[3])
 
             while (logsCursor.moveToNext()) {
-                val number = logsCursor.getString(numberInd)
-                val name = logsCursor.getString(nameInd)
-                val type = logsCursor.getString(typeInd)
-                val date = logsCursor.getLong(dateInd)
 
-                if (number != null && name != null && type != null) {
-                    callLogsList.add(CallLogs(name, number, getCallLogType(type.toInt()), null, date))
+                if (numberInd != -1 && nameInd != -1 && dateInd != -1 && typeInd != -1) {
+                    val number = logsCursor.getString(numberInd)
+                    val name = logsCursor.getString(nameInd)
+                    val type = logsCursor.getString(typeInd)
+                    val date = logsCursor.getLong(dateInd)
+
+                    if (number != null && name != null && type != null && date != null) {
+                        callLogsList.add(CallLogs(name, number, getCallLogType(type.toInt()), null, date))
+                    }
                 }
+
             }
         }
         logsCursor.close()
     }
-    callLogsList.sortWith { one, two ->
-        (two.date - one.date).toInt()
-    }
+
+    callLogsList.sortWith(Comparator { one, two ->
+        if (two.date > one.date) 1
+        else if (two.date < one.date) -1
+        else 0
+    })
+
     return callLogsList
 }
 
@@ -224,4 +234,4 @@ enum class CallLogType {
     UNKNOWN
 }
 
-val CONTACTS_PERMISSION_REQUEST_CODE = 112
+const val CONTACTS_PERMISSION_REQUEST_CODE = 112

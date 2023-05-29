@@ -79,7 +79,6 @@ class ContactSMSCallLogFragment : Fragment() {
     }
 
     private fun setUpContactScreenObservables() {
-        contactViewModel.refreshContacts()
         contactViewModel.contactLiveData.observe(viewLifecycleOwner) {
             binding.contactsRecyclerView.adapter = ContactsAdapter(it, context)
         }
@@ -91,7 +90,6 @@ class ContactSMSCallLogFragment : Fragment() {
     }
 
     private fun setUpCallLogScreenObservables() {
-        contactViewModel.refreshCallLogs()
         arguments?.let {
             val selectedTab = when (it.getInt("selected_tab")) {
                 1 -> CallLogType.INCOMING
@@ -112,7 +110,6 @@ class ContactSMSCallLogFragment : Fragment() {
     }
 
     private fun setUpSMSScreenObservables() {
-        contactViewModel.refreshSMS()
         contactViewModel.smsLiveData.observe(viewLifecycleOwner) {
             binding.contactsRecyclerView.adapter = SMSAdapter(it, context)
         }

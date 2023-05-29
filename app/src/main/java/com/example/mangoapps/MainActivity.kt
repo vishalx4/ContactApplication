@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = this.getSharedPreferences(getString(R.string.shared_preferences_screen), Context.MODE_PRIVATE)
         contactViewModel = ViewModelProvider(this, MyViewModelFactory(this.application))[ContactSMSCallLogViewModel::class.java]
         setUpDrawer()
-        if (hasContactsPermission()) {
+        if (hasAllPermissions()) {
             startFlow()
         } else {
             requestContactsPermission()
@@ -44,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startFlow() {
+
         contactViewModel.fetchContacts()
         contactViewModel.fetchCallLogs()
         contactViewModel.fetchSMS()
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun hasContactsPermission(): Boolean {
+    private fun hasAllPermissions(): Boolean {
         val readPermission =
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
         val writePermission =
@@ -110,7 +110,6 @@ class MainActivity : AppCompatActivity() {
                 callLogReadPermission == PackageManager.PERMISSION_GRANTED &&
                 callLogWritePermission == PackageManager.PERMISSION_GRANTED &&
                 smsPermission == PackageManager.PERMISSION_GRANTED
-
     }
 
     private fun requestContactsPermission() {
@@ -136,10 +135,10 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == CONTACTS_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty()) {
                 var flag = true;
-                grantResults.forEach {
-                    if (it != PackageManager.PERMISSION_GRANTED) {
+                for (result in grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
                         flag = false
-                        return@forEach
+                        break
                     }
                 }
                 if (flag) {
