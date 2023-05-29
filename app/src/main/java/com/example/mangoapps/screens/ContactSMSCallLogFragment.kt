@@ -17,6 +17,11 @@ import com.example.mangoapps.helper.SelectedScreen
 import com.example.mangoapps.viewmodels.ContactSMSCallLogViewModel
 import com.example.mangoapps.viewmodels.MyViewModelFactory
 
+/*
+    this fragment will act as a container for the Contact, CallLog and SMS Screen
+    used same fragment for reusability.
+ */
+
 class ContactSMSCallLogFragment : Fragment() {
 
     private lateinit var binding: FragmentContactsBinding
@@ -42,6 +47,9 @@ class ContactSMSCallLogFragment : Fragment() {
         setSwipeDownRefreshAction()
     }
 
+    /*
+        this method will call refresh the screen when user swipes down the list.
+     */
     private fun setSwipeDownRefreshAction() {
         binding.swipeToRefreshContacts.setOnRefreshListener {
             when (contactViewModel.selectedScreen) {
@@ -61,6 +69,9 @@ class ContactSMSCallLogFragment : Fragment() {
         }
     }
 
+    /*
+        this method is used to set Observable on live data as per the Screen
+     */
     private fun setUpObservables() {
         when (contactViewModel.selectedScreen) {
             SelectedScreen.CONTACT_SCREEN -> {
@@ -82,6 +93,8 @@ class ContactSMSCallLogFragment : Fragment() {
         contactViewModel.contactLiveData.observe(viewLifecycleOwner) {
             binding.contactsRecyclerView.adapter = ContactsAdapter(it, context)
         }
+
+        // stop the refreshing progress bar if the refresh action is completed.
         contactViewModel.isContactFetchJob.observe(viewLifecycleOwner) {
             if (it) {
                 binding.swipeToRefreshContacts.isRefreshing = false
@@ -97,11 +110,14 @@ class ContactSMSCallLogFragment : Fragment() {
                 3 -> CallLogType.MISSED_CALL
                 else -> CallLogType.UNKNOWN
             }
+
+            // filter the list as per the selectedTab.
             contactViewModel.callLogLiveData.observe(viewLifecycleOwner) { listOfCallLog ->
                 binding.contactsRecyclerView.adapter = CallLogAdapter(listOfCallLog.filter { it.callType == selectedTab }, context)
             }
         }
 
+        // stop the refreshing progress bar if the refresh action is completed.
         contactViewModel.isCallLogsFetchJob.observe(viewLifecycleOwner) {
             if (it) {
                 binding.swipeToRefreshContacts.isRefreshing = false
@@ -113,6 +129,8 @@ class ContactSMSCallLogFragment : Fragment() {
         contactViewModel.smsLiveData.observe(viewLifecycleOwner) {
             binding.contactsRecyclerView.adapter = SMSAdapter(it, context)
         }
+
+        // stop the refreshing progress bar if the refresh action is completed.
         contactViewModel.smsFetchCompleted.observe(viewLifecycleOwner) {
             if (it) {
                 binding.swipeToRefreshContacts.isRefreshing = false

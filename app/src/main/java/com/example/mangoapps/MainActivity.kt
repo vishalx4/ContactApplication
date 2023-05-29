@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mangoapps.databinding.ActivityMainBinding
 import com.example.mangoapps.helper.CONTACTS_PERMISSION_REQUEST_CODE
 import com.example.mangoapps.helper.SelectedScreen
-import com.example.mangoapps.screens.CallLogsFragment
+import com.example.mangoapps.screens.CallLogsViewPagerFragment
 import com.example.mangoapps.screens.ContactSMSCallLogFragment
 import com.example.mangoapps.screens.PermissionFragment
 import com.example.mangoapps.viewmodels.ContactSMSCallLogViewModel
@@ -32,9 +32,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // get the instance of shared preferences to check the last visited screen.
         sharedPreferences = this.getSharedPreferences(getString(R.string.shared_preferences_screen), Context.MODE_PRIVATE)
         contactViewModel = ViewModelProvider(this, MyViewModelFactory(this.application))[ContactSMSCallLogViewModel::class.java]
+
         setUpDrawer()
+
+        // if the permissions are verified start the flow else request for the permission.
         if (hasAllPermissions()) {
             startFlow()
         } else {
@@ -44,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startFlow() {
 
+        // fetching the data through coroutines.
         contactViewModel.fetchContacts()
         contactViewModel.fetchCallLogs()
         contactViewModel.fetchSMS()
@@ -54,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                     navigateToTheFragment(ContactSMSCallLogFragment(), SelectedScreen.CONTACT_SCREEN)
                 }
                 R.id.call_logs_menu -> {
-                    navigateToTheFragment(CallLogsFragment(), SelectedScreen.CALL_LOG_SCREEN)
+                    navigateToTheFragment(CallLogsViewPagerFragment(), SelectedScreen.CALL_LOG_SCREEN)
                 }
                 R.id.sms_menu -> {
                     navigateToTheFragment(ContactSMSCallLogFragment(), SelectedScreen.SMS_SCREEN)
@@ -66,13 +71,19 @@ class MainActivity : AppCompatActivity() {
         openLastVisitedScreen(sharedPreferences.getInt(getString(R.string.last_visited_screen), 0))
     }
 
+    /*
+        this method will open the last visited screen
+        if the app is opened for the first time then it will open the contact screen
+        as the passed default value is 0
+        ordinal : it represents the index of the enum.
+     */
     private fun openLastVisitedScreen(lastVisitedScreenInd: Int) {
         when (lastVisitedScreenInd) {
             SelectedScreen.CONTACT_SCREEN.ordinal -> {
                 navigateToTheFragment(ContactSMSCallLogFragment(), SelectedScreen.CONTACT_SCREEN)
             }
             SelectedScreen.CALL_LOG_SCREEN.ordinal -> {
-                navigateToTheFragment(CallLogsFragment(), SelectedScreen.CALL_LOG_SCREEN)
+                navigateToTheFragment(CallLogsViewPagerFragment(), SelectedScreen.CALL_LOG_SCREEN)
             }
             SelectedScreen.SMS_SCREEN.ordinal -> {
                 navigateToTheFragment(ContactSMSCallLogFragment(), SelectedScreen.SMS_SCREEN)

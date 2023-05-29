@@ -60,6 +60,8 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
             val two = async { retrieveContactNumber(application.contentResolver) }
             val three = async { retrieveImages(application.contentResolver) }
 
+            // names and images are fetched separately because it will dependent on the contactID
+            // so to avoid nesting i have run all three methods parallelly.
             val contactList = one.await()
             val numberAndIDMap = two.await()
             val imageAndIDMap = three.await()
@@ -83,6 +85,8 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
             val two = async { retrieveImages(application.contentResolver, true) }
             val list = one.await()
             val mapOfNameAndImage = two.await()
+
+            // adding images associated with the name.
             list.forEach {
                 if (mapOfNameAndImage.containsKey(it.name)) {
                     it.image = mapOfNameAndImage[it.name]?.get(0)

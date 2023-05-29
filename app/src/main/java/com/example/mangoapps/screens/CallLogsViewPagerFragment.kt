@@ -12,7 +12,7 @@ import com.example.mangoapps.viewmodels.ContactSMSCallLogViewModel
 import com.example.mangoapps.viewmodels.MyViewModelFactory
 import com.google.android.material.tabs.TabLayoutMediator
 
-class CallLogsFragment : Fragment() {
+class CallLogsViewPagerFragment : Fragment() {
 
     private lateinit var binding: FragmentCallLogsBinding
     private lateinit var contactViewModel: ContactSMSCallLogViewModel
@@ -33,6 +33,10 @@ class CallLogsFragment : Fragment() {
             contactViewModel = ViewModelProvider(it, MyViewModelFactory(it.application))[ContactSMSCallLogViewModel::class.java]
         }
         binding.callLogViewPager.adapter = CallLogViewPagerAdapter(this, contactViewModel)
+
+        /*
+            it will set the name of the tabs.
+         */
         TabLayoutMediator(binding.callLogTabLayout, binding.callLogViewPager) { tab, position ->
             tab.text = when (position+1) {
                 1 -> "INCOMING"
@@ -47,6 +51,11 @@ class CallLogViewPagerAdapter(fragment: Fragment, private val viewModel: Contact
     override fun getItemCount(): Int = 3
 
     override fun createFragment(position: Int): Fragment {
+
+        /*
+            while creating CallLog Screen we must pass the tab number to sort the list of CallLogs.
+         */
+
         val fragment =  ContactSMSCallLogFragment()
         when (position+1) {
             1 -> {
