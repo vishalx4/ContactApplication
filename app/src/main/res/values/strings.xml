@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MangoApps</string>
+    <string name="permission">please allow the permissions</string>
+    <string name="menu_contacts">Contacts</string>
+    <string name="menu_call_logs">Call Logs</string>
+    <string name="menu_sms">SMS</string>
+    <string name="close">close</string>
+    <string name="open">open</string>
+    <string name="shared_preferences_screen">Last visited screen</string>
+    <string name="last_visited_screen">Last visited screen</string>
+    <string name="application_name">Contact Application</string>
+    <string name="content_description_image_fot_the_contact">image fot the contact</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_permission">please give the appropriate permissions from the settings \n\n contacts \n call Logs \n SMS</string>
+</resources>
