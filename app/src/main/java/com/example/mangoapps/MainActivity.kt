@@ -71,11 +71,11 @@ class MainActivity : AppCompatActivity() {
         openLastVisitedScreen(sharedPreferences.getInt(getString(R.string.last_visited_screen), 0))
     }
 
-    /*
-        this method will open the last visited screen
-        if the app is opened for the first time then it will open the contact screen
-        as the passed default value is 0
-        ordinal : it represents the index of the enum.
+    /**
+     * this method will open the last visited screen
+     * if the app is opened for the first time then it will open the contact screen
+     * as the passed default value is 0
+     * ordinal : it represents the index of the enum.
      */
     private fun openLastVisitedScreen(lastVisitedScreenInd: Int) {
         when (lastVisitedScreenInd) {
@@ -97,6 +97,9 @@ class MainActivity : AppCompatActivity() {
         drawerToggle.syncState()
     }
 
+    /**
+     * this method navigates to the respective screen and updates the current selected screen data.
+     */
     private fun navigateToTheFragment(fragment: Fragment, selectedScreen: SelectedScreen) {
         contactViewModel.updateSelectedScreen(selectedScreen)
         supportFragmentManager.beginTransaction().apply {

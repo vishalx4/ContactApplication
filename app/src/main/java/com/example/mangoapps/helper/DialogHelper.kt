@@ -24,6 +24,7 @@ fun contactDialog(context: Context, contact: Contact): Dialog {
                 data = Uri.parse("tel:" + contact.number?.get(0))
             })
         }
+
         binding.messageAction.setOnClickListener {
             context.startActivity(Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("smsto:${contact.number?.get(0)}")

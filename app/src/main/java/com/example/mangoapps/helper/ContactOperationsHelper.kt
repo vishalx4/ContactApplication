@@ -7,11 +7,9 @@ import android.net.Uri
 import android.provider.CallLog
 import android.provider.ContactsContract
 import android.provider.Telephony
-import android.util.Log
 import com.example.mangoapps.models.CallLogs
 import com.example.mangoapps.models.Contact
 import com.example.mangoapps.models.SMS
-import java.util.Collections
 
 fun retrieveContacts(contentResolver: ContentResolver): List<Contact> {
     val listOfContact = mutableListOf<Contact>()

@@ -34,9 +34,9 @@ class CallLogAdapter(private val listOfCallLog: List<CallLogs>, private val cont
         return CallLogViewHolder(binding)
     }
 
-    override fun getItemCount() = listOfCallLog.size
-
     override fun onBindViewHolder(holder: CallLogViewHolder, position: Int) {
         holder.bind(listOfCallLog[position], context)
     }
+
+    override fun getItemCount() = listOfCallLog.size
 }

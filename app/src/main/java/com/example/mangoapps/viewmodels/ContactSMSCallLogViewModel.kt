@@ -15,6 +15,7 @@ import com.example.mangoapps.models.CallLogs
 import com.example.mangoapps.models.Contact
 import com.example.mangoapps.models.SMS
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -42,20 +43,27 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
 
     // to refresh the data
     private val _isContactFetchCompleted = MutableLiveData<Boolean>()
-    val isContactFetchJob: LiveData<Boolean>
+    val isContactFetchCompleted: LiveData<Boolean>
         get() = _isContactFetchCompleted
 
     private val _isCallLogFetchCompleted = MutableLiveData<Boolean>()
-    val isCallLogsFetchJob: LiveData<Boolean>
+    val isCallLogsFetchCompleted: LiveData<Boolean>
         get() = _isCallLogFetchCompleted
 
     private val _smsFetchCompleted = MutableLiveData<Boolean>()
     val smsFetchCompleted: LiveData<Boolean>
         get() = _smsFetchCompleted
 
-    fun fetchContacts() {
+    /**
+     * This method will fetch all the contacts from your smartphone.
+     * addDelay: this will update your UI smoothly.
+     */
+    fun fetchContacts(addDelay: Boolean = false) {
         viewModelScope.launch {
             _isContactFetchCompleted.value = false
+            if (addDelay) {
+                delay(5000)
+            }
             val one = async { retrieveContacts(application.contentResolver) }
             val two = async { retrieveContactNumber(application.contentResolver) }
             val three = async { retrieveImages(application.contentResolver) }
@@ -78,9 +86,16 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
         }
     }
 
-    fun fetchCallLogs() {
+    /**
+     * This method will fetch call logs from your smartphone.
+     * addDelay: this will update your UI smoothly.
+     */
+    fun fetchCallLogs(addDelay: Boolean = false) {
         viewModelScope.launch {
             _isCallLogFetchCompleted.value = false
+            if (addDelay) {
+                delay(5000)
+            }
             val one = async { retrieveCallLogs(application.contentResolver) }
             val two = async { retrieveImages(application.contentResolver, true) }
             val list = one.await()
@@ -97,9 +112,16 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
         }
     }
 
-    fun fetchSMS() {
+    /**
+     * This method will fetch the sms from your smartphone.
+     * addDelay: this will update your UI smoothly.
+     */
+    fun fetchSMS(addDelay: Boolean = false) {
         viewModelScope.launch {
             _smsFetchCompleted.value = false
+            if (addDelay) {
+                delay(5000)
+            }
             val one = async {  retrieveSMS(application.contentResolver) }
             val listOfSMS = one.await()
             _smsFetchCompleted.value = true
@@ -111,25 +133,25 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
         _selectedScreen = selectedScreen
     }
 
-    fun refreshCallLogs() {
+    fun refreshCallLogs(addDelay: Boolean = false) {
         _isCallLogFetchCompleted.value?.let {
             if (it) {
-                fetchCallLogs()
+                fetchCallLogs(addDelay)
             }
         }
     }
-    fun refreshContacts() {
+    fun refreshContacts(addDelay: Boolean = false) {
         _isContactFetchCompleted.value?.let {
             if (it) {
-                fetchContacts()
+                fetchContacts(addDelay)
             }
         }
     }
 
-    fun refreshSMS() {
+    fun refreshSMS(addDelay: Boolean = false) {
         _smsFetchCompleted.value?.let {
             if (it) {
-                fetchSMS()
+                fetchSMS(addDelay)
             }
         }
     }

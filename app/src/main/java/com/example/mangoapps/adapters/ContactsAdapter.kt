@@ -41,9 +41,9 @@ class ContactsAdapter(private val listOfContact: List<Contact>,private val conte
         return ContactViewHolder(binding)
     }
 
-    override fun getItemCount() = listOfContact.size
-
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
         holder.bind(listOfContact[position], context)
     }
+
+    override fun getItemCount() = listOfContact.size
 }
