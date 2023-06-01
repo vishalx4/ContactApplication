@@ -62,7 +62,7 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
         viewModelScope.launch {
             _isContactFetchCompleted.value = false
             if (addDelay) {
-                delay(5000)
+                delay(4000)
             }
             val one = async { retrieveContacts(application.contentResolver) }
             val two = async { retrieveContactNumber(application.contentResolver) }
@@ -94,7 +94,7 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
         viewModelScope.launch {
             _isCallLogFetchCompleted.value = false
             if (addDelay) {
-                delay(5000)
+                delay(4000)
             }
             val one = async { retrieveCallLogs(application.contentResolver) }
             val two = async { retrieveImages(application.contentResolver, true) }
@@ -120,7 +120,7 @@ class ContactSMSCallLogViewModel(private val application: Application): ViewMode
         viewModelScope.launch {
             _smsFetchCompleted.value = false
             if (addDelay) {
-                delay(5000)
+                delay(4000)
             }
             val one = async {  retrieveSMS(application.contentResolver) }
             val listOfSMS = one.await()

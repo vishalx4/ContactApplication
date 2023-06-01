@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -24,7 +25,7 @@ import com.example.mangoapps.viewmodels.MyViewModelFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var contactViewModel: ContactSMSCallLogViewModel
+    private lateinit var viewModel: ContactSMSCallLogViewModel
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         // get the instance of shared preferences to check the last visited screen.
         sharedPreferences = this.getSharedPreferences(getString(R.string.shared_preferences_screen), Context.MODE_PRIVATE)
-        contactViewModel = ViewModelProvider(this, MyViewModelFactory(this.application))[ContactSMSCallLogViewModel::class.java]
+        viewModel = ViewModelProvider(this, MyViewModelFactory(this.application))[ContactSMSCallLogViewModel::class.java]
 
         setUpDrawer()
 
@@ -49,10 +50,23 @@ class MainActivity : AppCompatActivity() {
     private fun startFlow() {
 
         // fetching the data through coroutines.
-        contactViewModel.fetchContacts()
-        contactViewModel.fetchCallLogs()
-        contactViewModel.fetchSMS()
+        viewModel.fetchContacts()
+        viewModel.fetchCallLogs()
+        viewModel.fetchSMS()
 
+        // it will refresh the data from HEADER refresh icon
+        binding.refreshAction.setOnClickListener {
+            when (viewModel.selectedScreen) {
+                SelectedScreen.CONTACT_SCREEN -> viewModel.refreshContacts(true)
+                SelectedScreen.CALL_LOG_SCREEN -> viewModel.refreshCallLogs(true)
+                SelectedScreen.SMS_SCREEN -> viewModel.refreshSMS(true)
+                else -> {
+                    Log.d(MainActivity::class.java.name, "Error while selecting screen")
+                }
+            }
+        }
+
+        // open selected screen
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.contact_menu -> {
@@ -68,6 +82,8 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.close()
             true
         }
+
+        // open last visited screen
         openLastVisitedScreen(sharedPreferences.getInt(getString(R.string.last_visited_screen), 0))
     }
 
@@ -101,7 +117,7 @@ class MainActivity : AppCompatActivity() {
      * this method navigates to the respective screen and updates the current selected screen data.
      */
     private fun navigateToTheFragment(fragment: Fragment, selectedScreen: SelectedScreen) {
-        contactViewModel.updateSelectedScreen(selectedScreen)
+        viewModel.updateSelectedScreen(selectedScreen)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.host_layout, fragment)
             commit()
@@ -176,7 +192,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         with(sharedPreferences.edit()) {
-            putInt(getString(R.string.last_visited_screen), contactViewModel.selectedScreen.ordinal)
+            putInt(getString(R.string.last_visited_screen), viewModel.selectedScreen.ordinal)
             apply()
         }
     }

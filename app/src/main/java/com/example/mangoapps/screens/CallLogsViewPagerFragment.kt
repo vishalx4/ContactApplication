@@ -15,7 +15,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class CallLogsViewPagerFragment : Fragment() {
 
     private lateinit var binding: FragmentCallLogsBinding
-    private lateinit var contactViewModel: ContactSMSCallLogViewModel
+    private lateinit var viewModel: ContactSMSCallLogViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,9 +30,9 @@ class CallLogsViewPagerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.let {
-            contactViewModel = ViewModelProvider(it, MyViewModelFactory(it.application))[ContactSMSCallLogViewModel::class.java]
+            viewModel = ViewModelProvider(it, MyViewModelFactory(it.application))[ContactSMSCallLogViewModel::class.java]
         }
-        binding.callLogViewPager.adapter = CallLogViewPagerAdapter(this, contactViewModel)
+        binding.callLogViewPager.adapter = CallLogViewPagerAdapter(this, viewModel)
 
         /*
             it will set the name of the tabs.
